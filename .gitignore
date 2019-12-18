@@ -1,0 +1,7 @@
+logs/
+datasets/
+.ipynb_checkpoints/
+*.jpg
+*.png
+*.gif
+*.h5
