@@ -59,7 +59,8 @@ from mrcnn import model as modellib, utils
 
 # Path to trained weights file
 COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
-TRAINED_MODEL_PATH = os.path.join(ROOT_DIR,"logs","coco20191217T1555" ,"mask_rcnn_voc.h5")
+TRAINED_MODEL_PATH = os.path.join(
+    ROOT_DIR, "logs", "coco20191217T1555", "mask_rcnn_voc.h5")
 
 # Directory to save logs and model checkpoints, if not provided
 # through the command line argument --logs
@@ -104,8 +105,9 @@ class CocoConfig(Config):
 ############################################################
 
 class CocoDataset(utils.Dataset):
+
     def load_voc(self, dataset_dir, subset, year=DEFAULT_DATASET_YEAR, class_ids=None,
-              class_map=None, return_coco=False, auto_download=False):
+                 class_map=None, return_coco=False, auto_download=False):
         """Load a subset of the COCO dataset.
         dataset_dir: The root directory of the COCO dataset.
         subset: What to load (train, val, minival, valminusminival)
@@ -116,7 +118,7 @@ class CocoDataset(utils.Dataset):
         return_coco: If True, returns the COCO object.
         auto_download: Automatically download and unzip MS-COCO images and annotations
         """
-        if subset=="train":
+        if subset == "train":
             coco = COCO("../vocdata/pascal_train.json")
 
             image_dir = dataset_dir
@@ -166,7 +168,7 @@ class CocoDataset(utils.Dataset):
                 class_ids = sorted(coco.getCatIds())
 
                 print(coco.getCatIds())
-            
+
             # All images or a subset?
             if class_ids:
                 image_ids = []
@@ -174,7 +176,7 @@ class CocoDataset(utils.Dataset):
                     image_ids.extend(list(coco.getImgIds(catIds=[id])))
                 # Remove duplicates
                 image_ids = list(set(image_ids))
-            
+
             # All images
             image_ids = list(coco.imgs.keys())
             print("-----------------")
@@ -211,8 +213,7 @@ class CocoDataset(utils.Dataset):
         """
         # If not a COCO image, delegate to parent class.
         image_info = self.image_info[image_id]
-        
-        
+
         if image_info["source"] != "coco":
             return super(CocoDataset, self).load_mask(image_id)
 
@@ -238,7 +239,8 @@ class CocoDataset(utils.Dataset):
                     # For crowd masks, annToMask() sometimes returns a mask
                     # smaller than the given dimensions. If so, resize it.
                     if m.shape[0] != image_info["height"] or m.shape[1] != image_info["width"]:
-                        m = np.ones([image_info["height"], image_info["width"]], dtype=bool)
+                        m = np.ones(
+                            [image_info["height"], image_info["width"]], dtype=bool)
                 instance_masks.append(m)
                 class_ids.append(class_id)
 
@@ -310,9 +312,11 @@ def build_coco_results(dataset, image_ids, rois, class_ids, scores, masks):
             bbox = np.around(rois[i], 1)
             mask = masks[:, :, i]
             pred = {}
-            pred['image_id'] = image_id # this imgid must be same as the key of test.json
+            # this imgid must be same as the key of test.json
+            pred['image_id'] = image_id
             pred['category_id'] = dataset.get_source_class_id(class_id, "coco")
-            pred['segmentation'] = binary_mask_to_rle(mask) # save binary mask to RLE, e.g. 512x512 -> rle
+            # save binary mask to RLE, e.g. 512x512 -> rle
+            pred['segmentation'] = binary_mask_to_rle(mask)
             pred['score'] = float(score)
             results.append(pred)
             # result = {
@@ -323,7 +327,7 @@ def build_coco_results(dataset, image_ids, rois, class_ids, scores, masks):
             #     #"segmentation": maskUtils.encode(np.asfortranarray(mask))
             #     "segmentation": binary_mask_to_rle(masks[:,:,i])
             # }
-            #results.append(result)
+            # results.append(result)
     return results
 
 
@@ -367,19 +371,19 @@ def evaluate_coco(model, dataset, coco, eval_type="bbox", limit=0, image_ids=Non
                                            r["rois"], r["class_ids"],
                                            r["scores"],
                                            r["masks"].astype(np.uint8))
-                                           
+
         print("----------A--------------")
         print(image_results)
         results.extend(image_results)
     with open('submission_0683403.json', 'w') as file:
         json.dump(results, file)
     print("Save in submit_0683403.json")
-    
+
     # Load results. This modifies results with additional attributes.
     #coco_results = coco.loadRes(results)
 
-    #return coco_results
-    
+    # return coco_results
+
     # Evaluate
 #     cocoEval = COCOeval(coco, coco_results, eval_type)
 #     cocoEval.params.imgIds = coco_image_ids
@@ -483,12 +487,12 @@ if __name__ == '__main__':
         # validation set, as as in the Mask RCNN paper.
         dataset_train = CocoDataset()
         dataset_train.load_voc(args.dataset, "train", year=args.year)
-       
+
         dataset_train.prepare()
 
         # Validation dataset
         dataset_val = CocoDataset()
-        
+
         dataset_val.load_voc(args.dataset, "train", year=args.year)
         dataset_val.prepare()
 
@@ -528,11 +532,12 @@ if __name__ == '__main__':
         # evaluate dataset
 
         dataset_test = CocoDataset()
-        coco = dataset_test.load_voc(args.dataset, "test", year=args.year,return_coco=True)
+        coco = dataset_test.load_voc(
+            args.dataset, "test", year=args.year, return_coco=True)
         dataset_test.prepare()
         print("Running evaluation on {} images.".format(args.limit))
         evaluate_coco(model, dataset_test, coco, "bbox", limit=int(args.limit))
-        
+
     else:
         print("'{}' is not recognized. "
               "Use 'train' or 'evaluate'".format(args.command))
