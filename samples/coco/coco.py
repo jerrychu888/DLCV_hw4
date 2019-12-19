@@ -118,11 +118,13 @@ class CocoDataset(utils.Dataset):
         return_coco: If True, returns the COCO object.
         auto_download: Automatically download and unzip MS-COCO images and annotations
         """
-        if subset == "train":
+        if subset == "train" or subset == "val":
             coco = COCO("../vocdata/pascal_train.json")
 
             image_dir = dataset_dir
-
+            if subset == "val":
+                #image_dir = "../vocdata/val"
+                print("")
             # Load all classes or a subset?
             if not class_ids:
                 # All classes
@@ -493,7 +495,7 @@ if __name__ == '__main__':
         # Validation dataset
         dataset_val = CocoDataset()
 
-        dataset_val.load_voc(args.dataset, "train", year=args.year)
+        dataset_val.load_voc(args.dataset, "val", year=args.year)
         dataset_val.prepare()
 
         # Image Augmentation
