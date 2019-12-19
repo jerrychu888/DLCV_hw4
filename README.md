@@ -1,3 +1,14 @@
+# HW4
+The homework 4 needed to use the PASCAL VOC dataset to do train a segmentation model which separate the objects in a picture by using mask(counts), in addition, identify the category with probability score and size of the object.
+
+#Excution
+There are two script command to finished homework4
+* Train Model command:
+    python3 coco.py train --dataset=../vocdata/train --model=imagenet
+* Use Model to Generate json file:
+    python3 coco.py evaluate --dataset=../vocdata/test --model=trained --limit=100
+
+
 # Mask R-CNN for Object Detection and Segmentation
 
 This is an implementation of [Mask R-CNN](https://arxiv.org/abs/1703.06870) on Python 3, Keras, and TensorFlow. The model generates bounding boxes and segmentation masks for each instance of an object in the image. It's based on Feature Pyramid Network (FPN) and a ResNet101 backbone.
