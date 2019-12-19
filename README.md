@@ -1,13 +1,14 @@
 # HW4
 The homework 4 needed to use the PASCAL VOC dataset to do train a segmentation model which separate the objects in a picture by using mask(counts), in addition, identify the category with probability score and size of the object.
 
-#Excution
+# Excution
 There are two script command to finished homework4
 * Train Model command:
     python3 coco.py train --dataset=../vocdata/train --model=imagenet
 * Use Model to Generate json file:
     python3 coco.py evaluate --dataset=../vocdata/test --model=trained --limit=100
 
+---
 
 # Mask R-CNN for Object Detection and Segmentation
 
